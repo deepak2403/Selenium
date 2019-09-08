@@ -1,0 +1,131 @@
+***********BASE CLASS*******************
+
+package Scripts;
+
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+
+public class BaseTest {
+	
+	public static WebDriver driver;
+	
+	@BeforeClass
+	public void precondition()
+	{
+		System.setProperty("webdriver.chrome.driver", "F:\\Chrome\\newchromedriver.exe");
+		driver = new ChromeDriver();
+		driver.get("https://www.flipkart.com/");
+		driver.manage().window().maximize();
+		driver.manage().timeouts().implicitlyWait(50, TimeUnit.SECONDS);
+
+	}
+	
+	@AfterClass
+	public void postcondition()
+	{
+		driver.close();
+	}
+}
+
+
+*******************Select the device********************
+
+
+package POM;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.interactions.Action;
+import org.openqa.selenium.interactions.Actions;
+
+public class SelectPixel {
+	
+	
+	@FindBy(xpath="html/body/div[2]/div/div/button")
+	private WebElement close;
+
+	@FindBy(xpath="//*[@id='container']/div/div[2]/div/ul/li[1]/span[text()='Electronics']")
+	private WebElement electronics;
+	
+	@FindBy(xpath="//div[@id='container']/div/div[2]/div/ul/li[1]/ul/li/ul/li[1]/ul/li")
+	private List<WebElement> phonelist;
+	
+	@FindBy(partialLinkText="Pixel")
+	private WebElement pixel;
+	
+	@FindBy(xpath="//div[@id='container']/div/div[3]/div[2]/div[1]/div[2]/div[2]/div/div/div/a/div[2]/div[1]/div[1]")
+	private WebElement firstphone;
+	
+	@FindBy(xpath="//button[contains(@class, '_2AkmmA _2Npkh4 _2MWPVK')]")
+	private WebElement addtocart;
+	
+	@FindBy(xpath="//button[contains(@class, 'wNrY5O')][2]")
+	private WebElement additem;
+	
+	@FindBy(xpath="//div[@id='container']/div/div[2]/div[2]/div/div[2]/div[1]/div/div/div[1]/div[3]/div/span")
+	private WebElement getprice;
+
+public SelectPixel(WebDriver driver)
+	{
+		PageFactory.initElements(driver, this);
+	}
+
+	public void SelectElectronics(WebDriver driver)
+	{
+		 close.click(); //close the login popup
+		 Actions hover = new Actions(driver);
+		 hover.moveToElement(electronics).clickAndHold().perform(); //Move to Electronics
+		 int x = pixel.getLocation().getX();
+		 int y = pixel.getLocation().getY();
+		 hover.moveToElement(pixel).click().perform(); //click on the Pixel mobile
+	}
+
+	public void cartPage(WebDriver driver)
+	{
+		firstphone.click();//click on the first phone in list
+		 ArrayList<String> newTab = new ArrayList<String>(driver.getWindowHandles());
+		 driver.switchTo().window(newTab.get(2)); //Switch to the new tab
+		 addtocart.click();
+		 driver.manage().timeouts().implicitlyWait(50, TimeUnit.SECONDS);
+		 additem.click();//Increase item count
+		 driver.manage().timeouts().implicitlyWait(150, TimeUnit.SECONDS);
+		 String flipkartvalue = getprice.getText().substring(1).replace(",", "");//get price to be paid
+		 System.out.println(flipkartvalue); 
+	}
+		 
+	}
+
+
+******************SCRIPT CLASS*******************************************
+
+
+package Scripts;
+
+import org.testng.annotations.Test;
+import org.testng.annotations.Test;
+
+import POM.SelectPixel;
+
+public class FlikpartAdd extends BaseTest
+{
+
+	@Test
+	public void Flipkart()
+	{
+		SelectPixel slector = new SelectPixel(driver);
+		slector.SelectElectronics(driver);
+		slector.cartPage(driver);
+	}
+	
+}

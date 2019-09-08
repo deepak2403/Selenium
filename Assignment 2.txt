@@ -1,0 +1,118 @@
+***********BASE CLASS*******************
+
+package Scripts;
+
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+
+public class BaseTest {
+	
+	public static WebDriver driver;
+	
+	@BeforeClass
+	public void precondition()
+	{
+		System.setProperty("webdriver.chrome.driver", "F:\\Chrome\\newchromedriver.exe");
+		driver = new ChromeDriver();
+		driver.get("https://www.amazon.in");
+		driver.manage().window().maximize();
+		driver.manage().timeouts().implicitlyWait(50, TimeUnit.SECONDS);
+
+	}
+	
+	@AfterClass
+	public void postcondition()
+	{
+		driver.close();
+	}
+}
+
+
+*******************Search the device********************
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;	
+
+	@FindBy(id="twotabsearchtextbox")
+	private WebElement search;
+	
+	@FindBy(xpath="//div[@id='search']/div[1]/div[2]/div/span[3]/div[1]/div[1]/div/div/div/div[2]/div[2]/div/div[2]/div[1]/div/div[1]/div[1]/div/a/span[1]/span[2]/span[2]")
+	private WebElement iphoneprice;
+	
+	@FindBy(xpath="html/body/div[2]/div/div/button")
+	private WebElement close;
+	
+	@FindBy(xpath="//div[@id='container']/div/div[1]/div[1]/div[2]/div[2]/form/div/div/input")
+	private WebElement flipkartsearch;
+	
+	@FindBy(xpath="//div[@id='container']/div/div[3]/div[2]/div[1]/div[2]/div[2]/div/div/div/a/div[2]/div[2]/div[1]/div/div[1]")
+	private WebElement flipkartprice;
+
+	
+
+public SelectPixel(WebDriver driver)
+	{
+		PageFactory.initElements(driver, this);
+	}
+
+public void SelectElectronics(WebDriver driver)
+	{
+		 search.sendKeys("iPhone 7 32 gb(black)");
+		 search.sendKeys(Keys.ENTER);
+		 driver.manage().timeouts().implicitlyWait(50, TimeUnit.SECONDS);
+		 String amazonvalue = iphoneprice.getText().replace(",", "");
+		 System.out.println(amazonvalue);
+		 driver.get("https://www.flipkart.com/");
+		 driver.manage().timeouts().implicitlyWait(50, TimeUnit.SECONDS);
+		 close.click();
+		 flipkartsearch.sendKeys("iPhone 7 32 gb(black)");
+		 flipkartsearch.sendKeys(Keys.ENTER);
+		 String flipkartvalue = flipkartprice.getText().substring(1).replace(",", "");
+		 System.out.println(flipkartvalue);
+		 int amazoncost = Integer.parseInt(amazonvalue);
+		 int flipkartcost= Integer.parseInt(flipkartvalue);
+		 System.out.println(amazoncost + flipkartcost);
+		 if(amazoncost > flipkartcost)
+		 {
+			 System.out.println("Flipkart is cheaper");
+		 }
+		 else
+		 {
+			 System.out.println("Amazon is cheaper");
+		 }
+		 
+		 
+		 
+	}
+}
+
+
+******************SCRIPT CLASS*******************************************
+
+package Scripts;
+
+import org.testng.annotations.Test;
+import org.testng.annotations.Test;
+
+import POM.SelectPixel;
+
+public class FlikpartAdd extends BaseTest
+{
+
+	@Test
+	public void Flipkart()
+	{
+		SelectPixel slector = new SelectPixel(driver);
+		slector.SelectElectronics(driver);
+	}
+	
+}
